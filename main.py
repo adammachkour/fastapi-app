@@ -4,7 +4,8 @@ import yfinance as yf
 from py_vollib.black_scholes_merton import black_scholes_merton
 from py_vollib.black_scholes_merton.greeks import analytical as bsm_analytical
 import datetime
-
+import json
+    
 app = FastAPI()
 
 # List of S&P 500 tickers (partial list; add more if needed)
@@ -514,9 +515,204 @@ sp500_tickers = [
     # Add more tickers as needed
 ]
 
+# Create a common menu bar HTML snippet
+menu_bar_html = """
+<nav class="menu-bar">
+    <div class="menu-container">
+        <a href="/" class="logo">BlackScholes.org</a>
+        <ul class="menu-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/us_equities">US Equities</a></li>
+        </ul>
+    </div>
+</nav>
+<style>
+    /* Menu Bar Styles */
+    .menu-bar {
+        background-color: #2563eb;
+        padding: 10px 20px;
+    }
+    .menu-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .menu-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+    .menu-links li {
+        margin-left: 20px;
+    }
+    .menu-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    .menu-links a:hover {
+        color: #d1d5db;
+    }
+    .logo {
+        color: white;
+        font-size: 1.25rem;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    @media (max-width: 768px) {
+        .menu-container {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .menu-links {
+            flex-direction: column;
+            width: 100%;
+        }
+        .menu-links li {
+            margin: 10px 0;
+        }
+    }
+</style>
+"""
+
+
 @app.get("/", response_class=HTMLResponse)
-async def get_home():
-    html_content = """
+async def get_landing_page():
+    html_content = f"""
+    <html>
+    <head>
+        <title>Black Scholes Option Pricer</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+        <style>
+            body {{
+                font-family: 'Inter', sans-serif;
+                background-color: #f9fafb;
+                color: #111827;
+                text-align: center;
+                margin: 0;
+                padding: 0;
+            }}
+            .container {{
+                padding: 100px 20px;
+            }}
+            h1 {{
+                font-size: 3rem;
+                margin-bottom: 10px;
+            }}
+            h2 {{
+                font-size: 1.5rem;
+                color: #555;
+                margin-bottom: 30px;
+            }}
+            p {{
+                font-size: 1rem;
+                line-height: 1.5;
+                max-width: 800px;
+                margin: 0 auto 20px;
+            }}
+            a {{
+                color: #2563eb;
+                text-decoration: none;
+            }}
+            a:hover {{
+                text-decoration: underline;
+            }}
+            .services {{
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                margin-top: 40px;
+                flex-wrap: wrap;
+            }}
+            .service {{
+                flex: 1 1 30%;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                text-align: center;
+                transition: transform 0.3s, box-shadow 0.3s;
+            }}
+            .service:hover {{
+                transform: translateY(-5px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }}
+            .service h3 {{
+                font-size: 1.25rem;
+                margin-bottom: 10px;
+                color: #2563eb;
+            }}
+            .service p {{
+                font-size: 1rem;
+                margin-bottom: 20px;
+                color: #4b5563;
+            }}
+            .service button {{
+                padding: 10px 20px;
+                background-color: #2563eb;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }}
+            .service button:hover {{
+                background-color: #1d4ed8;
+            }}
+
+        </style>
+    </head>
+    <body>
+        {menu_bar_html}
+        <div class="container">
+            <h1>Black Scholes Option Pricer</h1>
+            <h2>BlackScholes.org</h2>
+            <p>
+                The Black-Scholes model is a mathematical model for pricing an option contract.
+                To learn more about the Black-Scholes model, you can read the original paper:
+            </p>
+            <p>
+                <a href="http://www.jstor.org/stable/1831029?origin=JSTOR-pdf" target="_blank">
+                    The Pricing of Options and Corporate Liabilities
+                </a>
+            </p>
+            <!-- Services Section -->
+            <div class="services">
+                <!-- Option Price Container -->
+                <div class="service">
+                    <h3>Option pricer</h3>
+                    <p>Browse and price options on US stocks</p>
+                    <button onclick="location.href='/us_equities'">Go to US Equities</button>
+                </div>
+
+                <!-- Strategy Builder Container -->
+                <div class="service">
+                    <h3>Strategy builder</h3>
+                    <p>Structure and analyze your own strategies combining legs</p>
+                    <button>Coming soon...</button>
+                </div>
+
+                <!-- Pricing Zero Days to Expiration (0DTE) Container -->
+                <div class="service">
+                    <h3>Pricing Zero Days to Expiration (0DTE)</h3>
+                    <p>Model near expiry option contracts</p>
+                    <button>Coming soon...</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+
+@app.get("/us_equities", response_class=HTMLResponse)
+async def get_us_equities():
+    html_content = f"""
     <html>
     <head>
         <title>Options Data App</title>
@@ -529,6 +725,8 @@ async def get_home():
                 background-color: #f9fafb;
                 color: #111827;
                 font-size: 0.75rem;
+                margin: 0;
+                padding: 0;
             }}
             .container {{
                 width: 75%;
@@ -536,6 +734,7 @@ async def get_home():
                 margin: 0 auto;
                 padding: 16px;
             }}
+            /* Existing styles */
             .card {{
                 background-color: #ffffff;
                 border-radius: 0.5rem;
@@ -595,6 +794,7 @@ async def get_home():
         </style>
     </head>
     <body>
+        {menu_bar_html}
         <div class="container">
             <!-- Ticker Selection Section -->
             <div class="card">
@@ -642,7 +842,7 @@ async def get_home():
                 const errorMessage = document.getElementById('errorMessage');
                 errorMessage.textContent = '';
 
-                const validTickers = {valid_tickers};
+                const validTickers = {json.dumps(sp500_tickers)};
                 if (!validTickers.includes(ticker)) {{
                     errorMessage.textContent = 'Select a valid ticker';
                     return;
@@ -715,7 +915,7 @@ async def get_home():
     </footer>
     </body>
     </html>
-    """.format(valid_tickers=sp500_tickers)
+    """
     return HTMLResponse(content=html_content)
 
 
@@ -957,6 +1157,8 @@ async def option_contract(contract: str):
                     background-color: #f9fafb;
                     color: #111827;
                     font-size: 0.875rem;
+                    margin: 0;
+                    padding: 0;
                 }}
                 .container {{
                     width: 75%;
@@ -1017,9 +1219,12 @@ async def option_contract(contract: str):
                         flex: 1 1 100%;
                     }}
                 }}
+                {menu_bar_html}
             </style>
         </head>
         <body>
+        {menu_bar_html}
+        <div class="container">
             <div class="container">
                 <!-- Top Row: Contract Summary (Left) and Option Data (Right) -->
                 <div class="flex-container">
