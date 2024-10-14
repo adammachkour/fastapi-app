@@ -11,6 +11,7 @@ from data.tickers import sp500_tickers
 app = FastAPI()
 
 # Create a common menu bar HTML snippet
+# Create a common menu bar HTML snippet
 menu_bar_html = """
 <nav class="menu-bar">
     <div class="menu-container">
@@ -80,7 +81,7 @@ async def get_landing_page():
     html_content = f"""
     <html>
     <head>
-        <title>Black Scholes Option Pricer</title>
+        <title>Black-Scholes Option Pricer</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
         <style>
             body {{
@@ -164,10 +165,10 @@ async def get_landing_page():
     <body>
         {menu_bar_html}
         <div class="container">
-            <h1>Black Scholes Option Pricer</h1>
+            <h1>Black-Scholes Option Pricer</h1>
             <h2>BlackScholes.org</h2>
             <p>
-                The Black-Scholes model is a mathematical model for pricing an option contract.
+                The Black-Scholes formula provides a theoretical estimate of the price of European-style options. It is derived from the Black–Scholes equation, a partial differential equation that prices options by continuously buying and selling the underlying asset to perfectly hedge the option contract, thereby eliminating option risk.
                 To learn more about the Black-Scholes model, you can read the original paper:
             </p>
             <p>
@@ -181,22 +182,10 @@ async def get_landing_page():
                 <div class="service">
                     <h3>Option pricer</h3>
                     <p>Browse and price options on US stocks</p>
-                    <button onclick="location.href='/us_equities'">Go to US Equities</button>
+                    <button onclick="location.href='/us_equities'">US Equities</button>
                 </div>
 
-                <!-- Strategy Builder Container -->
-                <div class="service">
-                    <h3>Strategy builder</h3>
-                    <p>Structure and analyze your own strategies combining legs</p>
-                    <button>Coming soon...</button>
-                </div>
 
-                <!-- Pricing Zero Days to Expiration (0DTE) Container -->
-                <div class="service">
-                    <h3>Pricing Zero Days to Expiration (0DTE)</h3>
-                    <p>Model near expiry option contracts</p>
-                    <button>Coming soon...</button>
-                </div>
             </div>
         </div>
     </body>
@@ -1068,7 +1057,9 @@ async def recalculate(
 
     except Exception as e:
         return HTMLResponse(content=f"An error occurred: {e}", status_code=500)
-        
+
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

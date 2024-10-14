@@ -1,3 +1,4 @@
+
 sp500_tickers = [
     'AAPL', 
     'MSFT', 
