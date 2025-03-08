@@ -434,7 +434,7 @@ async def get_ticker_info(ticker: str):
             ex_dividend_date = 'N/A'
         
         forward_dividend = stock.info.get('dividendRate', 'N/A')
-        forward_yield = round(stock.info.get('dividendYield', 0) * 100, 2) if stock.info.get('dividendYield') else 'N/A'
+        forward_yield = round(stock.info.get('dividendYield', 0), 2) if stock.info.get('dividendYield') else 'N/A'
 
         # Create HTML for ticker information
         html_content = f"""
@@ -748,7 +748,7 @@ async def option_contract(contract: str):
                                 </tr>
                                 <tr>
                                     <th>Dividend Rate %</th>
-                                    <td><input type="number" step="0.01" id="dividend_rate" value="{dividend_yield * 100}" class="p-1 border border-gray-300 rounded w-full"></td>
+                                    <td><input type="number" step="0.01" id="dividend_rate" value="{dividend_yield}" class="p-1 border border-gray-300 rounded w-full"></td>
                                 </tr>
                             </table>
                             <div class="flex-center">
